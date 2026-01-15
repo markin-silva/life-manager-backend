@@ -113,10 +113,10 @@ goo build          # docker compose build
 goo up             # docker compose up
 goo down           # docker compose down
 goo restart        # down + up
-goo rails c        # docker compose exec api rails console
+goo rails c        # docker compose run --rm api rails console
 goo rails s        # docker compose exec api rails server -b 0.0.0.0
-goo db migrate     # docker compose exec api rails db:migrate
-goo db rollback    # docker compose exec api rails db:rollback
+goo db migrate     # docker compose run --rm api rails db:migrate
+goo db rollback    # docker compose run --rm api rails db:rollback
 goo test           # bundle exec rspec
 goo cop            # bundle exec rubocop
 ```
@@ -172,34 +172,13 @@ curl http://localhost:3000/api/v1/health
 Resposta esperada:
 ```json
 {
-  "status": "ok"
+  "status": "success",
+  "data": {
+    "status": "ok"
+  }
 }
 ```
 
-### Comandos Úteis do Docker
-
-```bash
-# Iniciar em background
-docker-compose up -d
-
-# Ver logs da API
-docker-compose logs -f api
-
-# Ver logs do banco de dados
-docker-compose logs -f db
-
-# Parar os containers
-docker-compose down
-
-# Acessar o console Rails
-docker-compose exec api rails console
-
-# Rodar migrations
-docker-compose exec api rails db:migrate
-
-# Rodar testes
-docker-compose exec api rails test
-```
 
 ## 🔧 Variáveis de Ambiente
 
@@ -224,9 +203,9 @@ LOG_LEVEL=info
 
 ### JSON API Standard
 
+```json
 Respostas padronizadas:
 
-```json
 {
   "status": "success",
   "data": {},
@@ -249,9 +228,12 @@ Erros padronizados:
 
 ```bash
 bundle exec rubocop      # Linting
+bundle exec rubocop -A   # Auto-correct
 bundle exec brakeman     # Segurança
-rails test               # Testes
+bundle exec rspec        # Testes
 ```
+
+**RuboCop**: configuração pragmática, focada em legibilidade e consistência, com regras adaptadas para Rails API e RSpec.
 
 ### Logging
 

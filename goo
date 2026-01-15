@@ -149,8 +149,10 @@ main() {
       ;;
     test)
       require_docker
+      say "→ Preparando ambiente de testes..."
+      docker compose run --rm -e RAILS_ENV=test "$SERVICE_NAME" rails db:environment:set
       say "→ Rodando testes (RSpec)..."
-      docker compose run --rm "$SERVICE_NAME" bundle exec rspec
+      docker compose run --rm -e RAILS_ENV=test "$SERVICE_NAME" bundle exec rspec
       ;;
     cop)
       require_docker

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0]
+
+### Added
+- RSpec test suite with organized specs (models, requests, policies, services).
+- FactoryBot setup and shared helpers for JSON parsing and authentication.
+
 ## [1.2.0]
 
 ### Added
