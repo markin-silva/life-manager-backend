@@ -5,6 +5,9 @@ ruby "3.3.0"
 # Authentication for Rails API
 gem "devise_token_auth"
 
+# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
+gem 'rack-cors'
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.2.3"
 # Use postgresql as the database for Active Record
