@@ -151,6 +151,7 @@ main() {
       require_docker
       say "→ Preparando ambiente de testes..."
       docker compose run --rm -e RAILS_ENV=test "$SERVICE_NAME" rails db:environment:set
+      docker compose run --rm -e RAILS_ENV=test "$SERVICE_NAME" rails db:migrate
       say "→ Rodando testes (RSpec)..."
       docker compose run --rm -e RAILS_ENV=test "$SERVICE_NAME" bundle exec rspec
       ;;

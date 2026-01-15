@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0]
+
+### Added
+- Transactions module with model, policy, controller, routes, and test coverage.
+
 ## [1.4.0]
 
 ### Added
