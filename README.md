@@ -82,6 +82,51 @@ O projeto adota versionamento **URI-based**, colocando a versão no caminho:
 
 ---
 
+## ⚡ Goo (CLI de produtividade)
+
+O projeto inclui um script bash chamado **goo** para facilitar comandos do dia a dia via terminal.
+
+### Instalação
+
+Na raiz do projeto:
+
+```bash
+chmod +x goo
+```
+
+Opcional: tornar disponível globalmente no terminal:
+
+```bash
+sudo ./goo setup
+```
+
+### Uso
+
+```bash
+./goo help
+```
+
+### Comandos disponíveis
+
+```bash
+goo build          # docker compose build
+goo up             # docker compose up
+goo down           # docker compose down
+goo restart        # down + up
+goo rails c        # docker compose exec api rails console
+goo rails s        # docker compose exec api rails server -b 0.0.0.0
+goo db migrate     # docker compose exec api rails db:migrate
+goo db rollback    # docker compose exec api rails db:rollback
+goo test           # bundle exec rspec
+goo cop            # bundle exec rubocop
+```
+
+### Variáveis
+
+- `SERVICE_NAME`: nome do serviço no Docker Compose (padrão: `api`)
+
+---
+
 ## 🚀 Como Rodar
 
 ### Pré-requisitos

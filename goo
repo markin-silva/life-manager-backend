@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+if command -v readlink >/dev/null 2>&1; then
+  SCRIPT_PATH="$(readlink -f "$SCRIPT_PATH" 2>/dev/null || echo "$SCRIPT_PATH")"
+fi
+PROJECT_ROOT="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+cd "$PROJECT_ROOT"
+
+SERVICE_NAME="${SERVICE_NAME:-api}"
+
+say() {
+  printf '%s\n' "$*"
+}
+
+die() {
+  printf 'Erro: %s\n' "$*" >&2
+  exit 1
+}
+
+require_root() {
+  if [[ ! -f "$PROJECT_ROOT/docker-compose.yml" && ! -f "$PROJECT_ROOT/docker-compose.yaml" ]]; then
+    die "Execute o goo na raiz do projeto (docker-compose.yml não encontrado)."
+  fi
+}
+
+require_docker() {
+  command -v docker >/dev/null 2>&1 || die "Docker não encontrado no PATH."
+  docker compose version >/dev/null 2>&1 || die "Docker Compose não está disponível (docker compose)."
+}
+
+usage() {
+  cat <<'EOF'
+Uso: goo <comando>
+
+Comandos:
+  setup              instala o goo no PATH (/usr/local/bin)
+  build              docker compose build
+  up                 docker compose up
+  down               docker compose down
+  restart            down + up
+  rails c            docker compose exec api rails console
+  rails s            docker compose exec api rails server -b 0.0.0.0
+  db migrate         docker compose exec api rails db:migrate
+  db rollback        docker compose exec api rails db:rollback
+  test               rodar testes (RSpec)
+  cop                rodar Rubocop
+  help               mostrar esta ajuda
+
+Variáveis:
+  SERVICE_NAME       nome do serviço no docker compose (padrão: api)
+EOF
+}
+
+do_setup() {
+  local target="/usr/local/bin/goo"
+  if ln -sf "$PROJECT_ROOT/goo" "$target" 2>/dev/null; then
+    say "→ Instalado em $target"
+    return 0
+  fi
+
+  if [[ -w "${target%/*}" ]]; then
+    die "Falha ao criar o link em $target."
+  fi
+
+  die "Sem permissão para escrever em ${target%/*}. Tente: sudo goo setup"
+}
+
+main() {
+  require_root
+
+  if [[ $# -eq 0 ]]; then
+    usage
+    exit 0
+  fi
+
+  case "$1" in
+    setup)
+      do_setup
+      ;;
+    build)
+      require_docker
+      say "→ Construindo imagens..."
+      docker compose build
+      ;;
+    up)
+      require_docker
+      say "→ Subindo containers..."
+      docker compose up
+      ;;
+    down)
+      require_docker
+      say "→ Parando containers..."
+      docker compose down
+      ;;
+    restart)
+      require_docker
+      say "→ Reiniciando containers..."
+      docker compose down
+      docker compose up
+      ;;
+    rails)
+      require_docker
+      case "${2:-}" in
+        c)
+          say "→ Abrindo Rails console..."
+          docker compose exec "$SERVICE_NAME" rails console
+          ;;
+        s)
+          say "→ Iniciando Rails server..."
+          docker compose exec "$SERVICE_NAME" rails server -b 0.0.0.0
+          ;;
+        *)
+          die "Use: goo rails c | goo rails s"
+          ;;
+      esac
+      ;;
+    db)
+      require_docker
+      case "${2:-}" in
+        migrate)
+          say "→ Rodando migrations..."
+          docker compose exec "$SERVICE_NAME" rails db:migrate
+          ;;
+        rollback)
+          say "→ Fazendo rollback de migrations..."
+          docker compose exec "$SERVICE_NAME" rails db:rollback
+          ;;
+        *)
+          die "Use: goo db migrate | goo db rollback"
+          ;;
+      esac
+      ;;
+    test)
+      require_docker
+      say "→ Rodando testes (RSpec)..."
+      docker compose exec "$SERVICE_NAME" bundle exec rspec
+      ;;
+    cop)
+      require_docker
+      say "→ Rodando Rubocop..."
+      docker compose exec "$SERVICE_NAME" bundle exec rubocop
+      ;;
+    help|-h|--help)
+      usage
+      ;;
+    *)
+      die "Comando inválido: $1 (use 'goo help')"
+      ;;
+  esac
+}
+
+main "$@"
