@@ -1,24 +1,228 @@
-# README
+# Life Manager API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Uma API REST desenvolvida em Ruby on Rails como projeto de portfólio, demonstrando arquitetura desacoplada, autenticação segura e boas práticas de desenvolvimento backend.
 
-Things you may want to cover:
+## 📋 Visão Geral
 
-* Ruby version
+Backend RESTful completamente independente do frontend, estruturado seguindo padrões de produção com foco em escalabilidade, segurança e manutenibilidade.
 
-* System dependencies
+**Características principais:**
+- API RESTful com versionamento (`/api/v1`)
+- Autenticação baseada em token (JWT)
+- Banco de dados PostgreSQL
+- Ambiente containerizado com Docker
+- Código organizado com padrões de boas práticas
 
-* Configuration
+## 🛠 Tecnologias
 
-* Database creation
+| Categoria | Tecnologia | Versão |
+|-----------|-----------|--------|
+| **Runtime** | Ruby | 3.3.0 |
+| **Framework** | Rails | 7.2.3+ |
+| **Banco de Dados** | PostgreSQL | 16 |
+| **Autenticação** | Devise Token Auth | Latest |
+| **Containerização** | Docker | Latest |
+| **Orquestração** | Docker Compose | Latest |
+| **Web Server** | Puma | 5.0+ |
+| **Segurança** | Brakeman | Latest |
+| **Linting** | Rubocop Rails | Latest |
 
-* Database initialization
+---
 
-* How to run the test suite
+## 🔐 Autenticação
 
-* Services (job queues, cache servers, search engines, etc.)
+### Estratégia de Autenticação
 
-* Deployment instructions
+O projeto utiliza **Devise Token Auth** com autenticação baseada em tokens JWT. Cada usuário recebe um token após login que deve ser incluído em requisições autenticadas.
 
-* ...
+### Headers de Autenticação
+
+```
+Authorization: Bearer <token>
+access-token: <token>
+client: <client_id>
+expiry: <timestamp>
+uid: <user_email>
+```
+
+### Fluxo de Autenticação
+
+1. **Signup**: `POST /api/v1/auth` com email e senha
+2. **Login**: `POST /api/v1/auth/sign_in` com credenciais
+3. **Refresh**: Tokens renovados automaticamente em cada requisição
+4. **Logout**: `DELETE /api/v1/auth/sign_out`
+
+### Detalhes de Tokens
+
+- **Expiração**: 2 semanas (configurável)
+- **Token cost**: 4 (teste) / 10 (produção)
+- **Max dispositivos**: 10 simultâneos por usuário
+
+---
+
+## 📡 Versionamento da API
+
+### Estratégia de Versionamento
+
+O projeto adota versionamento **URI-based**, colocando a versão no caminho:
+
+```
+/api/v1/health
+/api/v2/health  # Futuras versões coexistem
+```
+
+---
+
+## 🐳 Docker
+
+### Serviços
+
+- **API**: Rails em container (porta 3000)
+- **Database**: PostgreSQL 16 (porta 5432)
+
+---
+
+## 🚀 Como Rodar
+
+### Pré-requisitos
+
+- Docker e Docker Compose instalados
+- Git
+- Porta 3000 e 5432 disponíveis
+
+### Instalação e Execução
+
+#### 1. Clonar o repositório
+
+```bash
+git clone <repository-url>
+cd life_manager_backend
+```
+
+#### 2. Iniciar com Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+Isso irá:
+- Construir a imagem Docker
+- Iniciar a API na porta 3000
+- Iniciar o PostgreSQL na porta 5432
+
+#### 3. Preparar o banco de dados
+
+```bash
+docker-compose exec api rails db:create
+docker-compose exec api rails db:migrate
+docker-compose exec api rails db:seed  # Opcional
+```
+
+#### 4. Verificar o status da API
+
+```bash
+curl http://localhost:3000/api/v1/health
+```
+
+Resposta esperada:
+```json
+{
+  "status": "ok"
+}
+```
+
+### Comandos Úteis do Docker
+
+```bash
+# Iniciar em background
+docker-compose up -d
+
+# Ver logs da API
+docker-compose logs -f api
+
+# Ver logs do banco de dados
+docker-compose logs -f db
+
+# Parar os containers
+docker-compose down
+
+# Acessar o console Rails
+docker-compose exec api rails console
+
+# Rodar migrations
+docker-compose exec api rails db:migrate
+
+# Rodar testes
+docker-compose exec api rails test
+```
+
+## 🔧 Variáveis de Ambiente
+
+### Variáveis Obrigatórias
+
+```env
+DATABASE_URL=postgres://user:password@host:port/database_name
+RAILS_ENV=development
+RAILS_MASTER_KEY=<chave-mestre>
+```
+
+### Variáveis Opcionais
+
+```env
+DEVISE_TOKEN_AUTH_TOKEN_LIFESPAN=1209600
+DEVISE_TOKEN_AUTH_TOKEN_COST=10
+CORS_ORIGINS=http://localhost:3000
+LOG_LEVEL=info
+```
+
+## ✅ Boas Práticas
+
+### JSON API Standard
+
+Respostas padronizadas:
+
+```json
+{
+  "status": "success",
+  "data": {},
+  "meta": { "timestamp": "2026-01-14T10:00:00Z" }
+}
+```
+
+### Code Quality
+
+```bash
+bundle exec rubocop      # Linting
+bundle exec brakeman     # Segurança
+rails test               # Testes
+```
+
+### Logging
+
+```ruby
+Rails.logger.info("User logged in", user_id: user.id)
+Rails.logger.warn("Suspicious activity")
+Rails.logger.error("Database error")
+```
+
+---
+
+## 📝 Licença
+
+Este projeto é fornecido como-é para fins de portfólio e aprendizado.
+
+Você é livre para:
+- Estudar e entender o código
+- Usar como referência para seus próprios projetos
+- Contribuir com melhorias
+
+Quando usar este código como base:
+- Cite a fonte original
+- Adapte para suas necessidades
+- Não revenda como seu próprio trabalho
+
+---
+
+## 📞 Suporte e Contato
+
+Para dúvidas, sugestões ou reportar bugs, abra uma **issue** no repositório.
