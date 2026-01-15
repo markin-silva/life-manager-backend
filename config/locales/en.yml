@@ -28,4 +28,8 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  api:
+    status:
+      ok: "ok"
+      success: "success"
+      error: "error"

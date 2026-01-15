@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0]
+
+### Added
+- Global API response renderer with standardized success/error payloads.
+- I18n-based error handling for 403/404/422/500 responses.
+
+### Changed
+- Health endpoint now uses the standardized success response format.
+
 ## [1.1.0]
 
 ### Added

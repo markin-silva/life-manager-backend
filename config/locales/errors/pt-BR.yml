@@ -1,0 +1,14 @@
+pt-BR:
+  errors:
+    forbidden:
+      code: "forbidden"
+      message: "Você não tem autorização para realizar esta ação."
+    not_found:
+      code: "not_found"
+      message: "Recurso não encontrado."
+    unprocessable:
+      code: "unprocessable_entity"
+      message: "Falha de validação."
+    internal:
+      code: "internal_server_error"
+      message: "Erro inesperado."

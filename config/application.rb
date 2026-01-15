@@ -41,6 +41,11 @@ module Backend
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    config.i18n.available_locales = %i[en pt-BR]
+    config.i18n.default_locale = :en
+    config.i18n.fallbacks = [:en]
+    config.i18n.load_path += Dir[Rails.root.join("config", "locales", "**", "*.yml")]
+
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
   end

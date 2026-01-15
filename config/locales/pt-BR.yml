@@ -1,0 +1,6 @@
+pt-BR:
+  api:
+    status:
+      ok: "ok"
+      success: "success"
+      error: "error"

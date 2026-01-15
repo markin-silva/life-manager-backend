@@ -230,7 +230,18 @@ Respostas padronizadas:
 {
   "status": "success",
   "data": {},
-  "meta": { "timestamp": "2026-01-14T10:00:00Z" }
+  "meta": {}
+}
+
+Erros padronizados:
+
+{
+  "status": "error",
+  "error": {
+    "code": "string_identifier",
+    "message": "human readable message",
+    "details": {}
+  }
 }
 ```
 

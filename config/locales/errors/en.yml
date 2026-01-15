@@ -1,0 +1,14 @@
+en:
+  errors:
+    forbidden:
+      code: "forbidden"
+      message: "You are not authorized to perform this action."
+    not_found:
+      code: "not_found"
+      message: "Resource not found."
+    unprocessable:
+      code: "unprocessable_entity"
+      message: "Validation failed."
+    internal:
+      code: "internal_server_error"
+      message: "Unexpected error."
