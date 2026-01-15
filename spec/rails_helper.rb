@@ -8,12 +8,12 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require "rspec/rails"
 require "spec_helper"
 
-Dir[Rails.root.join("spec/support/**/*.rb")].sort.each { |file| require file }
+Rails.root.glob("spec/support/**/*.rb").each { |file| require file }
 
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
-  config.fixture_path = "#{::Rails.root}/spec/fixtures" if config.respond_to?(:fixture_path=)
+  config.fixture_path = Rails.root.join("spec/fixtures") if config.respond_to?(:fixture_path=)
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!

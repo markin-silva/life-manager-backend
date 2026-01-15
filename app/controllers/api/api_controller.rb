@@ -13,6 +13,5 @@ module Api
     def authenticate_user!
       authenticate_api_v1_user!
     end
-
   end
 end

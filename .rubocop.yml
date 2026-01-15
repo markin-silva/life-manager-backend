@@ -1,8 +1,102 @@
-# Omakase Ruby styling for Rails
-inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+inherit_mode:
+  merge:
+    - Exclude
 
-# Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+plugins:
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-performance
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.3
+  SuggestExtensions: false
+  Exclude:
+    - "db/schema.rb"
+    - "node_modules/**/*"
+    - "vendor/**/*"
+    - "bin/*"
+    - "tmp/**/*"
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/WordArray:
+  Enabled: false
+
+Style/GlobalStdStream:
+  Enabled: false
+
+Style/RedundantConstantBase:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+Rails/Exit:
+  Exclude:
+    - "spec/rails_helper.rb"
+
+# Pragmatic defaults
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - "config/initializers/devise.rb"
+
+Layout/ArgumentAlignment:
+  Enabled: false
+
+Layout/ExtraSpacing:
+  Exclude:
+    - "db/migrate/**/*"
+
+Layout/MultilineMethodCallIndentation:
+  Enabled: false
+
+Layout/SpaceInsideArrayLiteralBrackets:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 20
+  Exclude:
+    - "db/migrate/**/*"
+
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/ClassLength:
+  Max: 200
+
+Metrics/ModuleLength:
+  Max: 200
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+
+Rails/ThreeStateBooleanColumn:
+  Exclude:
+    - "db/migrate/**/*"
+
+# Rails API-only preferences
+Rails/SkipsModelValidations:
+  Enabled: false
+
+# RSpec-friendly defaults
+RSpec/MultipleExpectations:
+  Max: 5
+
+RSpec/ExampleLength:
+  Max: 15
+
+RSpec/DescribeClass:
+  Enabled: false
+
+RSpec/ImplicitSubject:
+  Enabled: false

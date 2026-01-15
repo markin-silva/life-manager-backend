@@ -44,7 +44,7 @@ module Backend
     config.i18n.available_locales = %i[en pt-BR]
     config.i18n.default_locale = :en
     config.i18n.fallbacks = [:en]
-    config.i18n.load_path += Dir[Rails.root.join("config", "locales", "**", "*.yml")]
+    config.i18n.load_path += Rails.root.glob("config/locales/**/*.yml")
 
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
