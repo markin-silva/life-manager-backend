@@ -30,6 +30,14 @@ require_docker() {
   docker compose version >/dev/null 2>&1 || die "Docker Compose não está disponível (docker compose)."
 }
 
+require_service_running() {
+  local running
+  running="$(docker compose ps --status running --services 2>/dev/null | grep -Fx "$SERVICE_NAME" || true)"
+  if [[ -z "$running" ]]; then
+    die "Serviço '$SERVICE_NAME' não está em execução. Rode: goo up"
+  fi
+}
+
 usage() {
   cat <<'EOF'
 Uso: goo <comando>
@@ -40,10 +48,11 @@ Comandos:
   up                 docker compose up
   down               docker compose down
   restart            down + up
-  rails c            docker compose exec api rails console
+  bundle             docker compose run --rm api bundle install
+  rails c            docker compose run --rm api rails console
   rails s            docker compose exec api rails server -b 0.0.0.0
-  db migrate         docker compose exec api rails db:migrate
-  db rollback        docker compose exec api rails db:rollback
+  db migrate         docker compose run --rm api rails db:migrate
+  db rollback        docker compose run --rm api rails db:rollback
   test               rodar testes (RSpec)
   cop                rodar Rubocop
   help               mostrar esta ajuda
@@ -100,14 +109,20 @@ main() {
       docker compose down
       docker compose up
       ;;
+    bundle)
+      require_docker
+      say "→ Instalando gems..."
+      docker compose run --rm "$SERVICE_NAME" bundle install
+      ;;
     rails)
       require_docker
       case "${2:-}" in
         c)
           say "→ Abrindo Rails console..."
-          docker compose exec "$SERVICE_NAME" rails console
+          docker compose run --rm "$SERVICE_NAME" rails console
           ;;
         s)
+          require_service_running
           say "→ Iniciando Rails server..."
           docker compose exec "$SERVICE_NAME" rails server -b 0.0.0.0
           ;;
@@ -121,11 +136,11 @@ main() {
       case "${2:-}" in
         migrate)
           say "→ Rodando migrations..."
-          docker compose exec "$SERVICE_NAME" rails db:migrate
+          docker compose run --rm "$SERVICE_NAME" rails db:migrate
           ;;
         rollback)
           say "→ Fazendo rollback de migrations..."
-          docker compose exec "$SERVICE_NAME" rails db:rollback
+          docker compose run --rm "$SERVICE_NAME" rails db:rollback
           ;;
         *)
           die "Use: goo db migrate | goo db rollback"
@@ -135,12 +150,12 @@ main() {
     test)
       require_docker
       say "→ Rodando testes (RSpec)..."
-      docker compose exec "$SERVICE_NAME" bundle exec rspec
+      docker compose run --rm "$SERVICE_NAME" bundle exec rspec
       ;;
     cop)
       require_docker
       say "→ Rodando Rubocop..."
-      docker compose exec "$SERVICE_NAME" bundle exec rubocop
+      docker compose run --rm "$SERVICE_NAME" bundle exec rubocop
       ;;
     help|-h|--help)
       usage

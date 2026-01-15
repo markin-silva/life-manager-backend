@@ -4,6 +4,7 @@ services:
     container_name: life_manager_api
     volumes:
       - .:/app
+      - bundle_cache:/usr/local/bundle
     ports:
       - "3000:3000"
     depends_on:
@@ -27,3 +28,4 @@ services:
 
 volumes:
   postgres_data:
+  bundle_cache:

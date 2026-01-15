@@ -5,6 +5,9 @@ ruby "3.3.0"
 # Authentication for Rails API
 gem "devise_token_auth"
 
+# Authorization
+gem "pundit"
+
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem 'rack-cors'
 

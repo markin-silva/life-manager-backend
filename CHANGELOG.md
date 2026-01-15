@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0]
+
+### Added
+- Pundit authorization handling in `Api::ApiController` with standardized 403 JSON errors.
+
+### Changed
+- Persist Bundler gems in Docker Compose via a named volume.
+
 ## [1.0.0]
 
 ### Added
