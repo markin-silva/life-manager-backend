@@ -7,11 +7,13 @@ RSpec.describe "Health", type: :request do
     it "returns ok status" do
       get "/api/v1/health"
 
-      expect(response).to have_http_status(:ok)
-      expect(json).to eq(
+      expected_payload = {
         "status" => I18n.t("api.status.success"),
         "data" => { "status" => I18n.t("api.status.ok") }
-      )
+      }
+
+      expect(response).to have_http_status(:ok)
+      expect(json).to eq(expected_payload)
     end
   end
 end
