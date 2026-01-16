@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Separate test database configuration from development via `DATABASE_URL_TEST`.
+- `goo test` now uses `rails db:prepare` to create and migrate the test database.
+
 ## [1.6.0]
 
 ### Added
