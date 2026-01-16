@@ -7,9 +7,11 @@ RSpec.describe "Transactions", type: :request do
     it "returns only transactions for the authenticated user" do
       user = create(:user)
       other_user = create(:user)
-      create(:transaction, user: user)
-      create(:transaction, user: user)
-      create(:transaction, user: other_user)
+      category = create(:category, user: user)
+      other_category = create(:category, user: other_user)
+      create(:transaction, user: user, category: category)
+      create(:transaction, user: user, category: category)
+      create(:transaction, user: other_user, category: other_category)
 
       headers = auth_headers(user)
 
@@ -24,13 +26,16 @@ RSpec.describe "Transactions", type: :request do
   describe "POST /api/v1/transactions" do
     it "creates a transaction for the authenticated user" do
       user = create(:user)
+      category = create(:category, user: user)
       headers = auth_headers(user)
       payload = {
         transaction: {
-          amount: 250.75,
+          amount: "250.75",
+          currency: "BRL",
+          paid: true,
           kind: "expense",
           description: "Groceries",
-          category: "Food",
+          category_id: category.id,
           occurred_at: Time.zone.now
         }
       }
@@ -39,8 +44,31 @@ RSpec.describe "Transactions", type: :request do
 
       expect(response).to have_http_status(:created)
       expect(json["status"]).to eq("success")
+    end
+
+    it "returns serialized fields" do
+      user = create(:user)
+      category = create(:category, user: user)
+      headers = auth_headers(user)
+      payload = {
+        transaction: {
+          amount: "250.75",
+          currency: "BRL",
+          paid: true,
+          kind: "expense",
+          description: "Groceries",
+          category_id: category.id,
+          occurred_at: Time.zone.now
+        }
+      }
+
+      post "/api/v1/transactions", params: payload, headers: headers
+
       expect(json["data"]["amount"]).to eq("250.75")
+      expect(json["data"]["currency"]).to eq("BRL")
+      expect(json["data"]["paid"]).to be(true)
       expect(json["data"]["kind"]).to eq("expense")
+      expect(json["data"]["category"]["id"]).to eq(category.id)
     end
   end
 

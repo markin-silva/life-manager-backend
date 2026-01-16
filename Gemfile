@@ -8,6 +8,9 @@ gem "devise_token_auth"
 # Authorization
 gem "pundit"
 
+# Money / currency
+gem "money-rails"
+
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors"
 

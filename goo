@@ -15,35 +15,35 @@ say() {
 }
 
 die() {
-  printf 'Erro: %s\n' "$*" >&2
+  printf 'Error: %s\n' "$*" >&2
   exit 1
 }
 
 require_root() {
   if [[ ! -f "$PROJECT_ROOT/docker-compose.yml" && ! -f "$PROJECT_ROOT/docker-compose.yaml" ]]; then
-    die "Execute o goo na raiz do projeto (docker-compose.yml não encontrado)."
+    die "Run goo from the project root (docker-compose.yml not found)."
   fi
 }
 
 require_docker() {
-  command -v docker >/dev/null 2>&1 || die "Docker não encontrado no PATH."
-  docker compose version >/dev/null 2>&1 || die "Docker Compose não está disponível (docker compose)."
+  command -v docker >/dev/null 2>&1 || die "Docker not found in PATH."
+  docker compose version >/dev/null 2>&1 || die "Docker Compose is not available (docker compose)."
 }
 
 require_service_running() {
   local running
   running="$(docker compose ps --status running --services 2>/dev/null | grep -Fx "$SERVICE_NAME" || true)"
   if [[ -z "$running" ]]; then
-    die "Serviço '$SERVICE_NAME' não está em execução. Rode: goo up"
+    die "Service '$SERVICE_NAME' is not running. Run: goo up"
   fi
 }
 
 usage() {
   cat <<'EOF'
-Uso: goo <comando>
+Usage: goo <command>
 
-Comandos:
-  setup              instala o goo no PATH (/usr/local/bin)
+Commmands:
+  setup              install goo in PATH (/usr/local/bin)
   build              docker compose build
   up                 docker compose up
   down               docker compose down
@@ -53,27 +53,28 @@ Comandos:
   rails s            docker compose exec api rails server -b 0.0.0.0
   db migrate         docker compose run --rm api rails db:migrate
   db rollback        docker compose run --rm api rails db:rollback
-  test               rodar testes (RSpec)
-  cop                rodar Rubocop
-  help               mostrar esta ajuda
+  db seed            docker compose run --rm api rails db:seed
+  test               run tests (RSpec)
+  cop                run Rubocop
+  help               show this help
 
-Variáveis:
-  SERVICE_NAME       nome do serviço no docker compose (padrão: api)
+Variables:
+  SERVICE_NAME       docker compose service name (default: api)
 EOF
 }
 
 do_setup() {
   local target="/usr/local/bin/goo"
   if ln -sf "$PROJECT_ROOT/goo" "$target" 2>/dev/null; then
-    say "→ Instalado em $target"
+    say "→ Installed at $target"
     return 0
   fi
 
   if [[ -w "${target%/*}" ]]; then
-    die "Falha ao criar o link em $target."
+    die "Failed to create symlink at $target."
   fi
 
-  die "Sem permissão para escrever em ${target%/*}. Tente: sudo goo setup"
+  die "No permission to write to ${target%/*}. Try: sudo goo setup"
 }
 
 main() {
@@ -90,40 +91,40 @@ main() {
       ;;
     build)
       require_docker
-      say "→ Construindo imagens..."
+      say "→ Building images..."
       docker compose build
       ;;
     up)
       require_docker
-      say "→ Subindo containers..."
+      say "→ Starting containers..."
       docker compose up
       ;;
     down)
       require_docker
-      say "→ Parando containers..."
+      say "→ Stopping containers..."
       docker compose down
       ;;
     restart)
       require_docker
-      say "→ Reiniciando containers..."
+      say "→ Restarting containers..."
       docker compose down
       docker compose up
       ;;
     bundle)
       require_docker
-      say "→ Instalando gems..."
+      say "→ Installing gems..."
       docker compose run --rm "$SERVICE_NAME" bundle install
       ;;
     rails)
       require_docker
       case "${2:-}" in
         c)
-          say "→ Abrindo Rails console..."
+          say "→ Opening Rails console..."
           docker compose run --rm "$SERVICE_NAME" rails console
           ;;
         s)
           require_service_running
-          say "→ Iniciando Rails server..."
+          say "→ Starting Rails server..."
           docker compose exec "$SERVICE_NAME" rails server -b 0.0.0.0
           ;;
         *)
@@ -135,36 +136,40 @@ main() {
       require_docker
       case "${2:-}" in
         migrate)
-          say "→ Rodando migrations..."
+          say "→ Running migrations..."
           docker compose run --rm "$SERVICE_NAME" rails db:migrate
           ;;
         rollback)
-          say "→ Fazendo rollback de migrations..."
+          say "→ Rolling back migrations..."
           docker compose run --rm "$SERVICE_NAME" rails db:rollback
           ;;
+        seed)
+          say "→ Seeding database..."
+          docker compose run --rm "$SERVICE_NAME" rails db:seed
+          ;;
         *)
-          die "Use: goo db migrate | goo db rollback"
+          die "Use: goo db migrate | goo db rollback | goo db seed"
           ;;
       esac
       ;;
     test)
       require_docker
-      say "→ Preparando ambiente de testes..."
+      say "→ Preparing test environment..."
       docker compose run --rm -e RAILS_ENV=test "$SERVICE_NAME" rails db:environment:set
       docker compose run --rm -e RAILS_ENV=test "$SERVICE_NAME" rails db:migrate
-      say "→ Rodando testes (RSpec)..."
+      say "→ Running tests (RSpec)..."
       docker compose run --rm -e RAILS_ENV=test "$SERVICE_NAME" bundle exec rspec
       ;;
     cop)
       require_docker
-      say "→ Rodando Rubocop..."
+      say "→ Running Rubocop..."
       docker compose run --rm "$SERVICE_NAME" bundle exec rubocop
       ;;
     help|-h|--help)
       usage
       ;;
     *)
-      die "Comando inválido: $1 (use 'goo help')"
+      die "Invalid command: $1 (use 'goo help')"
       ;;
   esac
 }

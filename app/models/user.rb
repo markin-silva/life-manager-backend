@@ -8,5 +8,6 @@ class User < ApplicationRecord
 
   include DeviseTokenAuth::Concerns::User
 
+  has_many :categories, dependent: :destroy
   has_many :transactions, dependent: :destroy
 end

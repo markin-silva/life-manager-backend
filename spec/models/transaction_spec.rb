@@ -11,7 +11,13 @@ RSpec.describe Transaction, type: :model do
     end
 
     it "requires amount" do
-      transaction = build(:transaction, amount: nil)
+      transaction = build(:transaction, amount_cents: nil, currency: "BRL")
+
+      expect(transaction).not_to be_valid
+    end
+
+    it "requires currency" do
+      transaction = build(:transaction, currency: nil)
 
       expect(transaction).not_to be_valid
     end
@@ -27,6 +33,18 @@ RSpec.describe Transaction, type: :model do
 
       expect(transaction).not_to be_valid
     end
+
+    it "requires paid to be boolean" do
+      transaction = build(:transaction, paid: nil)
+
+      expect(transaction).not_to be_valid
+    end
+
+    it "requires category" do
+      transaction = build(:transaction, category: nil)
+
+      expect(transaction).not_to be_valid
+    end
   end
 
   describe "associations" do
@@ -35,6 +53,13 @@ RSpec.describe Transaction, type: :model do
       transaction = create(:transaction, user: user)
 
       expect(transaction.user).to eq(user)
+    end
+
+    it "belongs to category" do
+      category = create(:category)
+      transaction = create(:transaction, category: category)
+
+      expect(transaction.category).to eq(category)
     end
   end
 

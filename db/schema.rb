@@ -10,22 +10,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_15_180000) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_16_100010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
+  create_table "categories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "key"
+    t.string "name"
+    t.string "color"
+    t.string "icon"
+    t.boolean "system", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_categories_on_key", unique: true, where: "(system = true)"
+    t.index ["user_id", "system"], name: "index_categories_on_user_id_and_system"
+    t.index ["user_id"], name: "index_categories_on_user_id"
+  end
+
   create_table "transactions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.decimal "amount", precision: 12, scale: 2, null: false
     t.integer "kind", null: false
     t.string "description"
-    t.string "category"
     t.datetime "occurred_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "category_id"
+    t.integer "amount_cents", default: 0, null: false
+    t.string "currency", default: "BRL", null: false
+    t.boolean "paid", default: true, null: false
+    t.index ["category_id"], name: "index_transactions_on_category_id"
+    t.index ["currency"], name: "index_transactions_on_currency"
     t.index ["kind"], name: "index_transactions_on_kind"
     t.index ["occurred_at"], name: "index_transactions_on_occurred_at"
+    t.index ["paid"], name: "index_transactions_on_paid"
     t.index ["user_id", "occurred_at"], name: "index_transactions_on_user_id_and_occurred_at"
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end
@@ -56,5 +75,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_15_180000) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "categories", "users"
+  add_foreign_key "transactions", "categories"
   add_foreign_key "transactions", "users"
 end
