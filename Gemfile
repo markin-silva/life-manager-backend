@@ -11,6 +11,12 @@ gem "pundit"
 # Money / currency
 gem "money-rails"
 
+# Pagination
+gem "kaminari"
+
+# JSON serialization
+gem "blueprinter"
+
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors"
 

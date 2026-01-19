@@ -1,6 +1,7 @@
 module Api
   class ApiController < ApplicationController
     include DeviseTokenAuth::Concerns::SetUserByToken
+    include Pagination
 
     before_action :authenticate_user!
 

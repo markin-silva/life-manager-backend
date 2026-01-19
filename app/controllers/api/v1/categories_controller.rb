@@ -3,12 +3,12 @@
 module Api
   module V1
     class CategoriesController < ApiController
-      include CategorySerialization
-
       def index
         categories = policy_scope(Category).order(:system, :key, :name)
 
-        render_success(data: categories.map { |category| serialize(category) })
+        data = CategoryBlueprint.render_as_hash(categories)
+
+        render_success(data: data)
       end
 
       def create
@@ -17,7 +17,9 @@ module Api
 
         category.save!
 
-        render_success(data: serialize(category), status: :created)
+        data = CategoryBlueprint.render_as_hash(category)
+
+        render_success(data: data, status: :created)
       end
 
       def update
@@ -26,7 +28,9 @@ module Api
 
         category.update!(category_params)
 
-        render_success(data: serialize(category))
+        data = CategoryBlueprint.render_as_hash(category)
+
+        render_success(data: data)
       end
 
       def destroy
@@ -44,9 +48,6 @@ module Api
         params.require(:category).permit(:name, :color, :icon)
       end
 
-      def serialize(category)
-        serialize_category(category)
-      end
     end
   end
 end

@@ -3,19 +3,24 @@
 module Api
   module V1
     class TransactionsController < ApiController
-      include CategorySerialization
-
       def index
-        transactions = policy_scope(Transaction).order(occurred_at: :desc)
+        transactions = policy_scope(Transaction)
+                       .order(occurred_at: :desc)
+                       .page(pagination_params[:page])
+                       .per(pagination_params[:per_page])
 
-        render_success(data: transactions.map { |transaction| serialize(transaction) })
+        data = TransactionBlueprint.render_as_hash(transactions)
+
+        render_success(data: data, meta: pagination_meta(transactions))
       end
 
       def show
         transaction = policy_scope(Transaction).find(params[:id])
         authorize transaction
 
-        render_success(data: serialize(transaction))
+        data = TransactionBlueprint.render_as_hash(transaction)
+
+        render_success(data: data)
       end
 
       def create
@@ -25,7 +30,9 @@ module Api
         transaction.category = permitted_category
         transaction.save!
 
-        render_success(data: serialize(transaction), status: :created)
+        data = TransactionBlueprint.render_as_hash(transaction)
+
+        render_success(data: data, status: :created)
       end
 
       def update
@@ -36,7 +43,9 @@ module Api
         transaction.category = permitted_category if transaction_params[:category_id].present?
         transaction.save!
 
-        render_success(data: serialize(transaction))
+        data = TransactionBlueprint.render_as_hash(transaction)
+
+        render_success(data: data)
       end
 
       def destroy
@@ -51,26 +60,7 @@ module Api
       private
 
       def transaction_params
-        params.require(:transaction).permit(:amount, :currency, :paid, :kind, :description, :category_id, :occurred_at)
-      end
-
-      def serialize(transaction)
-        {
-          id: transaction.id,
-          amount: formatted_amount(transaction),
-          currency: transaction.currency,
-          paid: transaction.paid,
-          kind: transaction.kind,
-          description: transaction.description,
-          category: serialize_category(transaction.category),
-          occurred_at: transaction.occurred_at,
-          created_at: transaction.created_at,
-          updated_at: transaction.updated_at
-        }
-      end
-
-      def formatted_amount(transaction)
-        (BigDecimal(transaction.amount_cents) / 100).to_s("F")
+        params.permit(:amount, :currency, :paid, :kind, :description, :category_id, :occurred_at)
       end
 
       def permitted_category

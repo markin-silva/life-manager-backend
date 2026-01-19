@@ -26,6 +26,8 @@ Backend RESTful completamente independente do frontend, estruturado seguindo pad
 | **Web Server** | Puma | 5.0+ |
 | **Segurança** | Brakeman | Latest |
 | **Linting** | Rubocop Rails | Latest |
+| **Paginação** | Kaminari | 1.2+ |
+| **Serialização** | Blueprinter | 1.2+ |
 
 ---
 
@@ -73,6 +75,27 @@ O projeto adota versionamento **URI-based**, colocando a versão no caminho:
 
 ---
 
+## 📄 Paginação
+
+Endpoints de listagem aceitam:
+
+- `page` (padrão: 1)
+- `per_page` (padrão: 30, máximo: 30)
+
+Exemplo de resposta:
+
+```json
+{
+  "status": "success",
+  "data": ["..."],
+  "meta": {
+    "current_page": 1,
+    "total_count": 120,
+    "per_page": 30
+  }
+}
+```
+
 ## 🐳 Docker
 
 ### Serviços
@@ -82,43 +105,43 @@ O projeto adota versionamento **URI-based**, colocando a versão no caminho:
 
 ---
 
-## ⚡ Goo (CLI de produtividade)
+## ⚡ Gup (CLI de produtividade)
 
-O projeto inclui um script bash chamado **goo** para facilitar comandos do dia a dia via terminal.
+O projeto inclui um script bash chamado **gup** para facilitar comandos do dia a dia via terminal.
 
 ### Instalação
 
 Na raiz do projeto:
 
 ```bash
-chmod +x goo
+chmod +x gup
 ```
 
 Opcional: tornar disponível globalmente no terminal:
 
 ```bash
-sudo ./goo setup
+sudo ./gup setup
 ```
 
 ### Uso
 
 ```bash
-./goo help
+./gup help
 ```
 
 ### Comandos disponíveis
 
 ```bash
-goo build          # docker compose build
-goo up             # docker compose up
-goo down           # docker compose down
-goo restart        # down + up
-goo rails c        # docker compose run --rm api rails console
-goo rails s        # docker compose exec api rails server -b 0.0.0.0
-goo db migrate     # docker compose run --rm api rails db:migrate
-goo db rollback    # docker compose run --rm api rails db:rollback
-goo test           # bundle exec rspec
-goo cop            # bundle exec rubocop
+gup build          # docker compose build
+gup up             # docker compose up
+gup down           # docker compose down
+gup restart        # down + up
+gup rails c        # docker compose run --rm api rails console
+gup rails s        # docker compose exec api rails server -b 0.0.0.0
+gup db migrate     # docker compose run --rm api rails db:migrate
+gup db rollback    # docker compose run --rm api rails db:rollback
+gup test           # bundle exec rspec
+gup cop            # bundle exec rubocop
 ```
 
 ### Variáveis

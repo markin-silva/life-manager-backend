@@ -21,7 +21,7 @@ die() {
 
 require_root() {
   if [[ ! -f "$PROJECT_ROOT/docker-compose.yml" && ! -f "$PROJECT_ROOT/docker-compose.yaml" ]]; then
-    die "Run goo from the project root (docker-compose.yml not found)."
+    die "Run gup from the project root (docker-compose.yml not found)."
   fi
 }
 
@@ -34,16 +34,16 @@ require_service_running() {
   local running
   running="$(docker compose ps --status running --services 2>/dev/null | grep -Fx "$SERVICE_NAME" || true)"
   if [[ -z "$running" ]]; then
-    die "Service '$SERVICE_NAME' is not running. Run: goo up"
+    die "Service '$SERVICE_NAME' is not running. Run: gup up"
   fi
 }
 
 usage() {
   cat <<'EOF'
-Usage: goo <command>
+Usage: gup <command>
 
 Commmands:
-  setup              install goo in PATH (/usr/local/bin)
+  setup              install gup in PATH (/usr/local/bin)
   build              docker compose build
   up                 docker compose up
   down               docker compose down
@@ -64,8 +64,8 @@ EOF
 }
 
 do_setup() {
-  local target="/usr/local/bin/goo"
-  if ln -sf "$PROJECT_ROOT/goo" "$target" 2>/dev/null; then
+  local target="/usr/local/bin/gup"
+  if ln -sf "$PROJECT_ROOT/gup" "$target" 2>/dev/null; then
     say "→ Installed at $target"
     return 0
   fi
@@ -74,7 +74,7 @@ do_setup() {
     die "Failed to create symlink at $target."
   fi
 
-  die "No permission to write to ${target%/*}. Try: sudo goo setup"
+  die "No permission to write to ${target%/*}. Try: sudo gup setup"
 }
 
 main() {
@@ -128,7 +128,7 @@ main() {
           docker compose exec "$SERVICE_NAME" rails server -b 0.0.0.0
           ;;
         *)
-          die "Use: goo rails c | goo rails s"
+          die "Use: gup rails c | gup rails s"
           ;;
       esac
       ;;
@@ -148,7 +148,7 @@ main() {
           docker compose run --rm "$SERVICE_NAME" rails db:seed
           ;;
         *)
-          die "Use: goo db migrate | goo db rollback | goo db seed"
+          die "Use: gup db migrate | gup db rollback | gup db seed"
           ;;
       esac
       ;;
@@ -168,7 +168,7 @@ main() {
       usage
       ;;
     *)
-      die "Invalid command: $1 (use 'goo help')"
+      die "Invalid command: $1 (use 'gup help')"
       ;;
   esac
 }

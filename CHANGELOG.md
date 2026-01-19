@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0]
+
+### Added
+- Pagination support for listing endpoints with meta (page/per_page) via Kaminari.
+- Blueprinter serializers for transactions and categories.
+
 ### Changed
+- Transactions and categories endpoints now use Blueprinter serialization.
 - Separate test database configuration from development via `DATABASE_URL_TEST`.
-- `goo test` now uses `rails db:prepare` to create and migrate the test database.
 
 ## [1.6.0]
 
@@ -17,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Categories with system and custom support, plus category endpoints and policies.
 - Transactions updated for categories, currency, amount_cents, and paid status.
 - MoneyRails configuration for currency handling in transactions.
-- Category seeds for system defaults and a `goo db seed` command.
+- Category seeds for system defaults and a `gup db seed` command.
 
 ## [1.5.0]
 
@@ -55,4 +61,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0]
 
 ### Added
-- `goo` CLI script to streamline Docker + Rails commands from the project root.
+- `gup` CLI script to streamline Docker + Rails commands from the project root.
