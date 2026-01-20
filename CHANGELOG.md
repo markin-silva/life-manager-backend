@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Use `DATABASE_URL` and `DATABASE_URL_TEST` only for database configuration.
+- Disable Devise mailer delivery (mailer unset, production deliveries off).
+- Remove Devise `recoverable` from the user model.
+- Enable Action Mailer framework loading in the application.
+
+### Added
+- Docker entrypoint to run production migrations automatically.
+
 ## [1.7.0]
 
 ### Added

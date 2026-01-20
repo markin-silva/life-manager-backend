@@ -103,6 +103,11 @@ Exemplo de resposta:
 - **API**: Rails em container (porta 3000)
 - **Database**: PostgreSQL 16 (porta 5432)
 
+### Entrypoint
+
+Em produção, o container executa migrações automaticamente via `entrypoint.sh`.
+Em outros ambientes, as migrações são ignoradas.
+
 ---
 
 ## ⚡ Gup (CLI de produtividade)
@@ -209,6 +214,7 @@ Resposta esperada:
 
 ```env
 DATABASE_URL=postgres://user:password@host:port/database_name
+DATABASE_URL_TEST=postgres://user:password@host:port/database_name_test
 RAILS_ENV=development
 RAILS_MASTER_KEY=<chave-mestre>
 ```
@@ -221,6 +227,10 @@ DEVISE_TOKEN_AUTH_TOKEN_COST=10
 CORS_ORIGINS=http://localhost:3000
 LOG_LEVEL=info
 ```
+
+### Observações
+
+- Recuperação de senha via Devise está desabilitada no backend.
 
 ## ✅ Boas Práticas
 
